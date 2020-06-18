@@ -18,6 +18,8 @@ public class Lesson {
 
     private String name;
     private int quota;
+    private int remainingQuota;
+
 
     @OneToMany
     private List<Course> courses = new ArrayList<>();
@@ -26,8 +28,9 @@ public class Lesson {
     }
 
     @Builder
-    public Lesson(String name, int quota) {
+    public Lesson(String name, int quota, int remainingQuota) {
         this.name = name;
         this.quota = quota;
+        this.remainingQuota = remainingQuota;
     }
 }
