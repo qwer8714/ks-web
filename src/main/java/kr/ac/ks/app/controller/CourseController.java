@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -31,6 +33,7 @@ public class CourseController {
     public String showCourseForm(Model model) {
         List<Student> students = studentRepository.findAll();
         List<Lesson> lessons = lessonRepository.findAll();
+        lessons.removeIf(o -> o.getRemainingQuota()<=0);
         model.addAttribute("students", students);
         model.addAttribute("lessons", lessons);
         return "courses/courseForm";
@@ -42,6 +45,9 @@ public class CourseController {
                                ) {
         Student student = studentRepository.findById(studentId).get();
         Lesson lesson = lessonRepository.findById(lessonId).get();
+        if (lesson.getRemainingQuota() == 0)
+            return "redirect:/courseForm";
+        lesson.setRemainingQuota(lesson.getRemainingQuota() - 1);
         Course course = Course.createCourse(student,lesson);
         Course savedCourse = courseRepository.save(course);
         return "redirect:/courses";
